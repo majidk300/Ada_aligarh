@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aligarh Land Purchase Survey | ADA Aligarh</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-hover: #0052a3;
+            --secondary-color: #f0f0f0;
+            --secondary-hover: #e0e0e0;
+            --text-color: #2c3e50;
+            --text-light: #7f8c8d;
+            --border-color: #ddd;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Notification Popup Styles */
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .notification-popup {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 420px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .notification-popup h2 {
+            color: var(--text-color);
+            margin: 0 0 15px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .notification-popup p {
+            color: var(--text-light);
+            margin: 0 0 20px;
+            font-size: 15px;
+        }
+
+        .notification-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .notification-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            min-width: 120px;
+            flex: 1;
+        }
+
+        .later-button {
+            background-color: var(--secondary-color);
+            color: #666;
+        }
+
+        .later-button:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .survey-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .survey-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Survey Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .survey-popup {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 520px;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .survey-header {
+            text-align: center;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .survey-header h2 {
+            color: var(--text-color);
+            margin: 15px 0 8px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .survey-header p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .ada-logo {
+            height: 80px;
+            margin: 0 auto;
+            display: block;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .form-container {
+            padding: 25px;
+        }
+
+        .survey-question {
+            margin-bottom: 20px;
+        }
+
+        .survey-question label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+
+        .survey-question select, 
+        .survey-question input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        .survey-question select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        .survey-question select:focus,
+        .survey-question input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+            background-color: #fff;
+        }
+
+        .survey-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 12px;
+        }
+
+        .survey-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .skip-button {
+            background-color: var(--secondary-color);
+            color: #666;
+        }
+
+        .skip-button:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .submit-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .submit-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            padding: 5px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .close-button:hover {
+            color: #555;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .thank-you-message {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .thank-you-message h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .thank-you-message p {
+            color: var(--text-light);
+            margin: 0 0 15px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .thank-you-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            fill: var(--primary-color);
+        }
+
+        .contact-number {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 20px;
+            display: inline-block;
+            font-size: 15px;
+            text-decoration: none;
+        }
+        
+        .phone-input {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .notification-buttons,
+            .survey-buttons {
+                flex-direction: column;
+            }
+            
+            .notification-button,
+            .survey-button {
+                width: 100%;
+            }
+            
+            .survey-header {
+                padding: 20px 15px;
+            }
+            
+            .form-container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Popup -->
+    <div class="notification-overlay" id="notification-overlay">
+        <div class="notification-popup">
+            <h2>Help Us Serve You Better</h2>
+            <p>We'd love to understand your land purchase preferences in Aligarh. Would you like to take a quick survey?</p>
+            <p>It will only take 1 minute!</p>
+            
+            <div class="notification-buttons">
+                <button class="notification-button later-button" id="later-button">Maybe Later</button>
+                <button class="notification-button survey-button" id="take-survey-button">Take Survey</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Survey Popup -->
+    <div class="popup-overlay hidden" id="survey-overlay">
+        <div class="survey-popup">
+            <button class="close-button" id="close-survey" aria-label="Close survey">&times;</button>
+            
+            <div class="survey-header">
+                <img class="ada-logo" src="ada-aligarh.png" alt="ADA Aligarh Logo">
+                   
+                <h2>Aligarh Land Purchase Preferences</h2>
+                <p>Help us serve you better by sharing your requirements</p>
+            </div>
+            
+            <div class="form-container">
+                <form id="land-survey">
+                    <div class="survey-question">
+                        <label for="purpose-area" class="required-field">1. What is your purpose for buying land in Aligarh?</label>
+                        <select id="purpose-area" required>
+                            <option value="" disabled selected>Select purpose</option>
+                            <option value="residential">Residential Plot</option>
+                            <option value="independent-house">Independent House</option>
+                            <option value="commercial">Commercial Property</option>
+                            <option value="agricultural">Agricultural Land</option>
+                            <option value="investment">Investment Purpose</option>
+                        </select>
+                    </div>
+                    
+                    <div class="survey-question">
+                        <label for="preferred-location" class="required-field">2. Preferred location in Aligarh?</label>
+                        <select id="preferred-location" required>
+                            <option value="" disabled selected>Select location</option>
+                            <option value="civil-lines">Civil Lines</option>
+                            <option value="ramghat-road">Ramghat Road</option>
+                            <option value="dodhpur">Dodhpur</option>
+                            <option value="harduaganj">Harduaganj</option>
+                            <option value="manik-chauk">Manik Chauk</option>
+                            <option value="sarsaul">Sarsaul</option>
+                            <option value="khardauli">Khardauli</option>
+                            <option value="gt-road">GT Road Area</option>
+                            <option value="other">Other Areas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="survey-question">
+                        <label for="area-size" class="required-field">3. How much area are you looking to purchase? (in sq. yards)</label>
+                        <select id="area-size" required>
+                            <option value="" disabled selected>Select area size</option>
+                            <option value="0-100">0-100 sq.yd</option>
+                            <option value="100-200">100-200 sq.yd</option>
+                            <option value="200-500">200-500 sq.yd</option>
+                            <option value="500-1000">500-1000 sq.yd</option>
+                            <option value="1000-2000">1000-2000 sq.yd</option>
+                            <option value="2000+">2000+ sq.yd</option>
+                            <option value="custom">Custom Requirement</option>
+                        </select>
+                    </div>
+                    
+                    <div class="survey-question">
+                        <label for="price-range" class="required-field">4. Expected price range (per sq yard)?</label>
+                        <select id="price-range" required>
+                            <option value="" disabled selected>Select price range</option>
+                            <option value="5000-10000">₹5,000 - ₹10,000</option>
+                            <option value="10000-20000">₹10,000 - ₹20,000</option>
+                            <option value="20000-30000">₹20,000 - ₹30,000</option>
+                            <option value="30000-50000">₹30,000 - ₹50,000</option>
+                            <option value="50000+">₹50,000+</option>
+                        </select>
+                    </div>
+                    
+                    <div class="survey-question">
+                        <label for="phone-number">5. Phone Number (optional):</label>
+                        <input type="tel" id="phone-number" placeholder="Enter your phone number" pattern="[0-9]{10}">
+                        <p class="phone-input">We'll contact you with matching properties</p>
+                    </div>
+                    
+                    <div class="survey-buttons">
+                        <button type="button" class="survey-button skip-button" id="skip-survey">Skip</button>
+                        <button type="submit" class="survey-button submit-button">Submit Preferences</button>
+                    </div>
+                </form>
+                
+                <div class="thank-you-message hidden" id="thank-you">
+                    <svg class="thank-you-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <h2>Thank You!</h2>
+                    <p>Our team will contact you with suitable properties in Aligarh.</p>
+                    <p class="contact-number">Call us: +91 98765 43210</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Notification elements
+            const notificationOverlay = document.getElementById('notification-overlay');
+            const laterButton = document.getElementById('later-button');
+            const takeSurveyButton = document.getElementById('take-survey-button');
+            
+            // Survey elements
+            const surveyOverlay = document.getElementById('survey-overlay');
+            const closeSurveyBtn = document.getElementById('close-survey');
+            const skipSurveyBtn = document.getElementById('skip-survey');
+            const surveyForm = document.getElementById('land-survey');
+            const thankYouMessage = document.getElementById('thank-you');
+            
+            // Show notification popup immediately (no delay)
+            notificationOverlay.classList.remove('hidden');
+            
+            // Later button - close notification
+            laterButton.addEventListener('click', function() {
+                notificationOverlay.classList.add('hidden');
+            });
+            
+            // Take Survey button - show survey popup
+            takeSurveyButton.addEventListener('click', function() {
+                notificationOverlay.classList.add('hidden');
+                surveyOverlay.classList.remove('hidden');
+            });
+            
+            // Close survey popup
+            closeSurveyBtn.addEventListener('click', function() {
+                surveyOverlay.classList.add('hidden');
+                resetSurvey();
+            });
+            
+            // Skip survey
+            skipSurveyBtn.addEventListener('click', function() {
+                surveyForm.classList.add('hidden');
+                thankYouMessage.classList.remove('hidden');
+                
+                // Close after 2 seconds
+                setTimeout(function() {
+                    surveyOverlay.classList.add('hidden');
+                    resetSurvey();
+                }, 2000);
+            });
+            
+            // Submit survey
+            surveyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const formData = {
+                    purpose: document.getElementById('purpose-area').value,
+                    location: document.getElementById('preferred-location').value,
+                    areaSize: document.getElementById('area-size').value,
+                    priceRange: document.getElementById('price-range').value,
+                    phoneNumber: document.getElementById('phone-number').value || 'Not provided',
+                    timestamp: new Date().toISOString(),
+                    source: 'ADA Aligarh Website Survey'
+                };
+                
+                // Log data (for testing)
+                console.log('Survey submitted:', formData);
+                
+                // Show thank you message
+                surveyForm.classList.add('hidden');
+                thankYouMessage.classList.remove('hidden');
+                
+                // Close after 3 seconds
+                setTimeout(function() {
+                    surveyOverlay.classList.add('hidden');
+                    resetSurvey();
+                }, 3000);
+            });
+            
+            // Reset survey form
+            function resetSurvey() {
+                setTimeout(function() {
+                    surveyForm.reset();
+                    surveyForm.classList.remove('hidden');
+                    thankYouMessage.classList.add('hidden');
+                }, 200);
+            }
+            
+            // Close when clicking outside the popup (notification)
+            notificationOverlay.addEventListener('click', function(e) {
+                if (e.target === notificationOverlay) {
+                    notificationOverlay.classList.add('hidden');
+                }
+            });
+            
+            // Close when clicking outside the popup (survey)
+            surveyOverlay.addEventListener('click', function(e) {
+                if (e.target === surveyOverlay) {
+                    surveyOverlay.classList.add('hidden');
+                    resetSurvey();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
